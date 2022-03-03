@@ -4,11 +4,13 @@
 #include<fstream>
 constexpr double u_0 = 0.062233835;
 constexpr double t_0 = 0.5;
-constexpr double t_end = 0.9;
+constexpr double t_end = 3.0;
 
-constexpr double tau = 0.05;
+constexpr double tau = 0.005;
 constexpr double b0 = 0.5;
 constexpr double b1 = 0.5;
+
+constexpr double epsSimpleIter = 0.00000000001;
 
 double f(double tn, double yn) {
 	return (3 * yn + 2 * tn*yn) / (tn * tn);//y'=(3y+2ty)/(t^2)
@@ -48,17 +50,30 @@ std::vector<double> adamsMethod(std::function<double(double, double)> f, double 
 	std::vector<double> y(numb_yn);
 	y[0] = y0;
 
-	double fn_sub_1 = f(t0, y0);
 	double tn = t0;
+	double y_pred;
+	double fn_sub_1;
+	double fn = f(t0, y0);
 
 	//yn=tau(b0*fn+b1*fn_1) + yn_1
 	for (int n = 1; n < numb_yn; n++) {
-		//computing yn
-
 		tn += tau;
-		y[n] = newtonesMethod(f_newton, y[n - 1], tn, y[n - 1], fn_sub_1);
 
-		fn_sub_1 = f(tn, y[n]);
+		//computing yn
+		fn_sub_1 = f(tn-tau, y[n-1]);
+		y[n] = tau * b1 * fn_sub_1 + y[n - 1];
+		std::cout << y[n] << std::endl;
+
+		do {
+			y_pred = y[n];
+			fn_sub_1 = fn;
+			//std::cout << y_pred << "\n";
+			fn = f(tn, y_pred);
+			y[n] = tau * (b0 * fn + b1 * fn_sub_1) + y[n - 1];
+
+		} while (abs(y[n] - y_pred) > epsSimpleIter);
+		std::cout << std::endl;
+		//y[n] = newtonesMethod(f_newton, y[n - 1], tn, y[n - 1], fn_sub_1);
 	}
 	return y;
 }
@@ -68,7 +83,7 @@ int main(int argc, char* argv) {
 
 	std::vector<double> u = adamsMethod(f, u_0, t_0, t_end);
 	for (double item : u) {
-		std::cout << item << " ";
+		//std::cout << item << " ";
 		fout << item << "\n";
 	}
 
