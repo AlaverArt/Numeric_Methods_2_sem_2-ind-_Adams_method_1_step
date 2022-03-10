@@ -8,11 +8,16 @@
 //constexpr double t_end = 2.0;
 
 //ex2
-constexpr double u_0 = 0.062233835;
-constexpr double t_0 = 0.5;
-constexpr double t_end = 2.0;
+//constexpr double u_0 = 1.717786535;
+//constexpr double t_0 = 0.1;
+//constexpr double t_end = 3.1;
 
-constexpr double tau = 0.05;
+//ex3
+constexpr double u_0 = 0.294983804;
+constexpr double t_0 = -1.5;
+constexpr double t_end = 1.5;
+
+constexpr double tau = 0.15;
 constexpr double b0 = 0.5;
 constexpr double b1 = 0.5;
 
@@ -24,7 +29,10 @@ double f(double tn, double yn) {
 	//return yn * (3 + 2 * tn) / (tn * tn);//y'=(3y+2ty)/(t^2)
 
 	//ex2
-	return -(yn + 2 * tn * yn * yn * log(tn)) / tn;//y'=-(y+2ty*lnt)/t
+	//return -(yn + 2 * tn * yn * yn * log(tn)) / tn;//y'=-(y+2ty*lnt)/t
+
+	//ex3
+	return (3 * tn * tn - yn) / sqrt(tn * tn + 1);
 }
 
 double f_newton(double yn, double tn, double yn_sub_1, double fn_sub_1) {
